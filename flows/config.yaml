@@ -1,0 +1,8 @@
+# Your Maestro Studio workspace. Flows you write in the lessons go here.
+flows:
+  - '**'
+platform:
+  android:
+    disableAnimations: true
+  ios:
+    disableAnimations: true

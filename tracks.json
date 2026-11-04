@@ -1,0 +1,7 @@
+{
+  "core": {
+    "app": "v0.2.0",
+    "appRelease": "https://github.com/majdukovic/maestro-course-frontrow/releases/tag/app-v0.2.0",
+    "maestro": "2.12.1"
+  }
+}

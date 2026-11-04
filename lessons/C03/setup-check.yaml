@@ -1,0 +1,13 @@
+# Setup check: if this passes, Maestro, your device and the FrontRow app
+# are all working. Run it from the repo root:
+#   maestro test lessons/C03/setup-check.yaml
+appId: app.frontrow.qa
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: 'screen.events'
+    timeout: 20000
+- assertVisible:
+    id: 'events.item.evt_001'

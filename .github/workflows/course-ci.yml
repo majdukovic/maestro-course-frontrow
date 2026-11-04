@@ -1,0 +1,71 @@
+name: Course CI (Android)
+
+# Runs the setup check and every flow in flows/ against the pinned
+# FrontRow release on an Android emulator. Pins come from tracks.json.
+on:
+  push:
+    branches: [main, solutions]
+    tags: ['mc/*-end']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      API_LEVEL: 34
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Read pinned versions
+        run: |
+          echo "MAESTRO_VERSION=$(jq -r .core.maestro tracks.json)" >> $GITHUB_ENV
+          echo "APP_TAG=app-$(jq -r .core.app tracks.json)" >> $GITHUB_ENV
+
+      - name: Download FrontRow release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$APP_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'FrontRow.apk' --pattern 'SHA256SUMS.txt' --dir app-release
+          cd app-release && grep FrontRow.apk SHA256SUMS.txt | sha256sum -c -
+
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run flows on the emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            maestro --version
+            adb install -r app-release/FrontRow.apk
+            maestro test lessons/C03/setup-check.yaml --format junit --output report-setup.xml
+            if ls flows/*.yaml flows/**/*.yaml 2>/dev/null | grep -v 'config.yaml' | grep -q .; then maestro test flows/ --format junit --output report-flows.xml; else echo "No flows yet in flows/"; fi
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-reports
+          path: |
+            report-*.xml
+            ~/.maestro/tests/
+          if-no-files-found: ignore
