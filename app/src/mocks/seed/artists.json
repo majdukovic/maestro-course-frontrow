@@ -1,0 +1,50 @@
+[
+  {
+    "id": "art_midnight_howl",
+    "name": "Midnight Howl",
+    "avatarUrl": null,
+    "bio": "Brooklyn indie-rock four-piece known for layered guitar work.",
+    "genres": ["Indie Rock"],
+    "followers": 14820
+  },
+  {
+    "id": "art_aurora_symphony",
+    "name": "Aurora Symphony",
+    "avatarUrl": null,
+    "bio": "Touring orchestra performing Nordic and contemporary classical works.",
+    "genres": ["Classical"],
+    "followers": 8210
+  },
+  {
+    "id": "art_various",
+    "name": "Various Artists",
+    "avatarUrl": null,
+    "bio": "A curated lineup of multiple performers.",
+    "genres": ["Electronic"],
+    "followers": 0
+  },
+  {
+    "id": "art_quiet_hours",
+    "name": "Quiet Hours",
+    "avatarUrl": null,
+    "bio": "Folk solo artist with a four-album catalog.",
+    "genres": ["Folk"],
+    "followers": 4530
+  },
+  {
+    "id": "art_sora_aoyama",
+    "name": "Sora Aoyama",
+    "avatarUrl": null,
+    "bio": "Tokyo-based J-Pop artist touring international festivals.",
+    "genres": ["J-Pop"],
+    "followers": 18470
+  },
+  {
+    "id": "art_last_train_home",
+    "name": "Last Train Home",
+    "avatarUrl": null,
+    "bio": "Three-piece punk band, six EPs and one full-length.",
+    "genres": ["Punk"],
+    "followers": 3210
+  }
+]

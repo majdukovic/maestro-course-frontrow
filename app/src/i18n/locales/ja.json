@@ -1,0 +1,19 @@
+{
+  "events": {
+    "heading": "イベント",
+    "placeholder": "今後のコンサートやショーを見る。",
+    "searchPlaceholder": "公演・アーティスト・都市を検索…"
+  },
+  "myTickets": {
+    "heading": "マイチケット",
+    "placeholder": "購入したチケットがここに表示されます。"
+  },
+  "profile": {
+    "heading": "プロフィール",
+    "placeholder": "サインインしてアカウントを管理してください。"
+  },
+  "debug": {
+    "heading": "QAデバッグメニュー",
+    "placeholder": "シードデータ、タイムトラベル、フェイクプッシュなど。"
+  }
+}

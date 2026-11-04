@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "FrontRow",
+    "slug": "frontrow",
+    "scheme": "frontrow",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FF3B5C"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.frontrow.qa",
+      "buildNumber": "2"
+    },
+    "android": {
+      "package": "app.frontrow.qa",
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FF3B5C"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-localization", "./plugins/with-native-showcase"]
+  }
+}

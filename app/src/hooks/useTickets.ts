@@ -1,0 +1,93 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import {
+  listMyTickets,
+  getTicket,
+  purchaseTicket,
+  cancelTicket,
+  applyPromoCode,
+  transferTicket,
+} from '../api/services/tickets';
+import { useAuthStore } from '../state/auth';
+import { track } from '../state/analytics';
+
+export function useMyTickets() {
+  const token = useAuthStore((s) => s.token);
+  return useQuery({
+    queryKey: ['tickets', 'mine', token],
+    queryFn: () => listMyTickets(token),
+    enabled: Boolean(token),
+  });
+}
+
+export function useTicket(id: string) {
+  const token = useAuthStore((s) => s.token);
+  return useQuery({
+    queryKey: ['tickets', 'detail', token, id],
+    queryFn: () => getTicket(token, id),
+    enabled: Boolean(token && id),
+  });
+}
+
+export function usePurchaseTicket() {
+  const token = useAuthStore((s) => s.token);
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { eventId: string; quantity: number; tierId?: string }) => {
+      track('ticket.purchase.intent', input);
+      return purchaseTicket(token, input);
+    },
+    onSuccess: (ticket) => {
+      track('ticket.purchase.success', { ticketId: ticket.id, eventId: ticket.eventId });
+      void qc.invalidateQueries({ queryKey: ['tickets', 'mine'] });
+    },
+    onError: (err) => {
+      track('ticket.purchase.failure', { message: (err as Error).message });
+    },
+  });
+}
+
+export function useApplyPromoCode() {
+  return useMutation({
+    mutationFn: (input: { eventId: string; code: string }) => {
+      track('promo.apply.attempt', input);
+      return applyPromoCode(input);
+    },
+    onSuccess: (res) =>
+      track('promo.apply.success', { code: res.code, percentOff: res.percentOff }),
+    onError: (err) => track('promo.apply.failure', { message: (err as Error).message }),
+  });
+}
+
+export function useCancelTicket() {
+  const token = useAuthStore((s) => s.token);
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => {
+      track('ticket.cancel.intent', { ticketId: id });
+      return cancelTicket(token, id);
+    },
+    onSuccess: (ticket) => {
+      track('ticket.cancel.success', { ticketId: ticket.id });
+      void qc.invalidateQueries({ queryKey: ['tickets'] });
+    },
+  });
+}
+
+export function useTransferTicket() {
+  const token = useAuthStore((s) => s.token);
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { ticketId: string; recipientEmail: string }) => {
+      track('ticket.transfer.intent', input);
+      return transferTicket(token, input.ticketId, input.recipientEmail);
+    },
+    onSuccess: (ticket) => {
+      track('ticket.transfer.success', { ticketId: ticket.id });
+      void qc.invalidateQueries({ queryKey: ['tickets'] });
+    },
+    onError: (err) => {
+      track('ticket.transfer.failure', { message: (err as Error).message });
+    },
+  });
+}
